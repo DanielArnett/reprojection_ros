@@ -418,8 +418,8 @@ void main()
             //float newHeight = float(newWidth) / float(height) ;
             //croppedUv.y /= newHeight;
             croppedUv = 0.5*croppedUv+0.5;
-            // croppedUv.x += xCenter - 1.0;
-            // croppedUv.y += yCenter - 1.0;
+            croppedUv.x += xCenter - 1.0;
+            croppedUv.y += yCenter - 1.0;
             if (croppedUv.x < 0.0  || croppedUv.y < 0.0 || 1.0 < croppedUv.x || 1.0 < croppedUv.y)
             {
                 //continue;
@@ -454,8 +454,8 @@ void main()
                     lineCount += 1.0;
                 }
             }
-            fragColor += color;
-            gl_FragColor = color;
+            //fragColor += color;
+            gl_FragColor = sqrt(color);
             //if (i == 0 && j == 0)
             //{
             //    // This is the aliased pixel. If we didn't do antialiasing this is the pixel we'd get.
