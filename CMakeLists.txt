@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(opengl_ros)
+project(reprojection)
 
 ## Enable C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -134,20 +134,16 @@ include_directories(
 # add_dependencies(opengl_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(simple_renderer src/simple_renderer_node.cpp src/simple_renderer_nodecore.cpp)
-add_executable(color_extraction_cpu src/color_extraction_cpu_node.cpp src/color_extraction_cpu_nodecore.cpp)
+add_executable(reprojection src/reprojection_node.cpp src/reprojection_nodecore.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(opengl_ros_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(simple_renderer
+target_link_libraries(reprojection
   ${catkin_LIBRARIES}
   ${opengl_ros_lib_LIBRARIES}
-)
-target_link_libraries(color_extraction_cpu
-  ${catkin_LIBRARIES}
 )
 
 #############

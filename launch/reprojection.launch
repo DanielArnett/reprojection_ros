@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="device"    default="/dev/video0"/>
+  <arg name="width"     default="640"/>
+  <arg name="height"    default="480"/>
+  <arg name="framerate" default="15"/>
+
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+    <param name="video_device"    value="$(arg device)"/>
+    <param name="image_width"     value="$(arg width)"/>
+    <param name="image_height"    value="$(arg height)"/>
+    <param name="framerate"       value="$(arg framerate)"/>
+    <param name="pixel_format"    value="yuyv"/>
+    <param name="camera_frame_id" value="usb_cam"/>
+    <param name="io_method"       value="mmap"/>
+
+    <remap from="/usb_cam/image_raw" to="/image_in"/>
+  </node>
+
+  <node pkg="reprojection" type="reprojection"
+    name="reprojection" output="screen">
+    <param name="width"           value="$(arg width)"/>
+    <param name="height"          value="$(arg height)"/>
+    <param name="vertex_shader" value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
+    <param name="fragment_shader" value="$(find reprojection)/shader/reprojection.frag"/>
+
+    <param name="correction1"		value="1.0"/>
+    <param name="correction2"   	value="1.0"/>
+    <param name="correction3"   	value="1.0"/>
+    <param name="correction4"   	value="1.0"/>
+    <param name="cropTop"   		value="1.0"/>
+    <param name="cropBottom"   		value="1.0"/>
+    <param name="cropLeft"    		value="1.0"/>
+    <param name="cropRight"     	value="1.0"/>
+    <param name="xCenter"       	value="1.0"/>
+    <param name="yCenter"   		value="1.0"/>
+    <param name="pitch"   		value="0.0"/>
+    <param name="roll"   		value="0.0"/>
+    <param name="yaw"   		value="0.0"/>
+    <param name="fovIn"   		value="1.0"/>
+    <param name="fovOut"   		value="1.0"/>
+    <param name="x"   			value="1.0"/>
+    <param name="y"   			value="1.0"/>
+    <param name="z"   			value="1.0"/>
+    <param name="inputProjection"   	value="0"/>
+    <param name="outputProjection"   	value="0"/>
+    <param name="gridLines"   		value="0"/>
+
+    <remap from="image_in"  to="/image_in"/>
+    <remap from="image_out" to="/image_out"/>
+  </node>
+
+  <node pkg="image_view" type="image_view" name="viewer_in">
+    <remap from="image" to="/image_in"/>
+  </node>
+
+  <node pkg="image_view" type="image_view" name="viewer_out">
+    <remap from="image" to="/image_out"/>
+  </node>
+</launch>
