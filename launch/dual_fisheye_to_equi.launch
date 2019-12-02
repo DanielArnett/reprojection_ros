@@ -30,7 +30,8 @@
     </node>
   </group>
 
-  <group ns="blended_equi">
+  <!-- TODO -->
+  <!--group ns="blended_equi">
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
@@ -41,13 +42,17 @@
       <param name="image_out" 		value="image"/>
 
     </node>
-  </group>
+  </group-->
   
-  <!--node pkg="image_view" type="image_view" name="viewer_in">
+  <node pkg="image_view" type="image_view" name="viewer_in">
     <remap from="image" to="$(arg input_topic)"/>
-  </node-->
+  </node>
 
-  <node pkg="image_view" type="image_view" name="viewer_out">
-    <remap from="image" to="equi_left"/>
+  <node pkg="image_view" type="image_view" name="left_equi_viewer">
+    <remap from="image" to="/left_equi/image"/>
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="right_equi_viewer">
+    <remap from="image" to="/right_equi/image"/>
   </node>
 </launch>
