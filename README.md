@@ -13,6 +13,7 @@ git clone https://github.com/mohammedari/opengl_ros.git
 
 Then build your catkin workspace.
 ```
+source <catkin_ws>/devel/setup.bash
 cd <catkin_ws>
 catkin_make
 ```
