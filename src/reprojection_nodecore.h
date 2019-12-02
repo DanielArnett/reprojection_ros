@@ -29,8 +29,8 @@ class SimpleRendererNode
 
     void imageCallback(const sensor_msgs::Image::ConstPtr& msg);
     void reconfigure_callback(reprojection::reprojectionConfig &config, uint32_t level);
-    float correction1, correction2, correction3, correction4, cropTop;
-    float cropBottom, cropLeft, cropRight, xCenter, yCenter;
+    float correction1, correction2, correction3, correction4;
+    float croppedWidth, croppedHeight, xCenter, yCenter;
     float pitch, roll, yaw, x, y, z, fovIn, fovOut;
     int inputProjection, outputProjection, gridLines;
 

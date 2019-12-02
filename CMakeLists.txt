@@ -93,8 +93,7 @@ find_package(OpenCV REQUIRED)
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
-  cfg/dual_fisheye_left.cfg
-#  cfg/dual_fisheye_right.cfg
+  cfg/reprojection.cfg
 )
 
 ###################################

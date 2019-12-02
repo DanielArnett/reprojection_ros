@@ -13,7 +13,7 @@
 precision highp float;
 uniform sampler2D InputTexture;
 uniform vec2 resolution;
-uniform float correction1, correction2, correction3, correction4, cropTop, cropBottom, cropLeft, cropRight, xCenter, yCenter;
+uniform float correction1, correction2, correction3, correction4, croppedWidth, croppedHeight, xCenter, yCenter;
 uniform float pitch, roll, yaw, fovIn, fovOut, x, y, z;
 uniform int inputProjection, outputProjection, gridLines, width, height;
 in vec4 gl_FragCoord;
@@ -333,10 +333,10 @@ void main()
             return;
         }
     }
-    vec3 InputRotation = vec3(pitch, roll, yaw);
+    vec3 InputRotation = vec3(pitch/360.0, roll/360.0, yaw/360.0);
     vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 centerFragColor = vec4(0.0, 0.0, 0.0, 0.0);
-    float fovInput = fovIn;
+    float fovInput = fovIn / 180.0;
     float fovOutput = fovOut;
     vec4 fishCorrect = vec4(correction1, correction2, correction3, correction4);
     fishCorrect.xyzw -= 1.0;
@@ -409,17 +409,10 @@ void main()
             else if (inputProjection == FLAT)
             sourcePixel = latLonToFlatUv(latLon, fovInput);
             vec2 croppedUv = 2.0*sourcePixel-1.0;
-            float croppedWidth = cropRight - (cropLeft - 1.0);
-            float croppedHeight = cropTop - (cropBottom - 1.0);
-            // gl_FragColor = vec4(croppedWidth, 0.0, 0.0, 1.0);
-            // return;
-            croppedUv = vec2(croppedUv.x / cropRight, croppedUv.y / cropTop);
-            //float newWidth = float(width) / (croppedWidth + 1.0);
-            //float newHeight = float(newWidth) / float(height) ;
-            //croppedUv.y /= newHeight;
+            croppedUv = vec2(croppedUv.x * croppedWidth/resolution.x, croppedUv.y * croppedHeight/resolution.y);
             croppedUv = 0.5*croppedUv+0.5;
-            croppedUv.x += xCenter - 1.0;
-            croppedUv.y += yCenter - 1.0;
+            croppedUv.x += xCenter/resolution.x - 0.5;
+            croppedUv.y += yCenter/resolution.y - 0.5;
             if (croppedUv.x < 0.0  || croppedUv.y < 0.0 || 1.0 < croppedUv.x || 1.0 < croppedUv.y)
             {
                 //continue;
