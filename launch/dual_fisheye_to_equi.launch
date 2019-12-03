@@ -16,6 +16,7 @@
       <param name="image_in" 		value="$(arg input_topic)"/>
       <param name="image_out" 		value="image"/>
     </node>
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /left_equi/reprojection $(find reprojection)/cfg/dual_fisheye_left.yaml" />
   </group>
 
   <group ns="right_equi">
@@ -28,6 +29,7 @@
       <param name="image_in" 		value="$(arg input_topic)"/>
       <param name="image_out" 		value="image"/>
     </node>
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /right_equi/reprojection $(find reprojection)/cfg/dual_fisheye_right.yaml" />
   </group>
 
   <!-- TODO -->
