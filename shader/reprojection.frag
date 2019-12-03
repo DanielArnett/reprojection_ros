@@ -430,8 +430,9 @@ void main()
             //    return;
             //}
             if (blendFront < point.y) {
-                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-                return;
+                opacity = 1.0;
+                //gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+                //return;
             }
             else if (blendBack < point.y && point.y < blendFront) {
                 float blendDiff = blendFront - blendBack;
@@ -440,9 +441,10 @@ void main()
                 //gl_FragColor = vec4(1.0-blendPercent, blendPercent, 0.0, 1.0);
                 opacity = blendPercent;
             } 
-            else if (point.y < blendBack) {
-                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-                return;
+            else if (point.y < blendBack) { 
+                opacity = 0.0;
+                //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                //return;
             }
             // Set the color of the destination pixel to the color of the source pixel
             vec4 color = texture2D(InputTexture, croppedUv);
@@ -467,7 +469,9 @@ void main()
             }
             //fragColor += color;
             gl_FragColor = sqrt(color);
-            gl_FragColor.r = 1.0 - opacity;
+            if (uv.x > 0.5) {
+                gl_FragColor.w = 0.0;
+            }
             //if (i == 0 && j == 0)
             //{
             //    // This is the aliased pixel. If we didn't do antialiasing this is the pixel we'd get.

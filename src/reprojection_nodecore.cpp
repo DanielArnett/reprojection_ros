@@ -126,7 +126,7 @@ SimpleRendererNode::SimpleRendererNode(const ros::NodeHandle& nh, const ros::Nod
     //renderer_->uniform("outputProjection", outputProjection);
     //renderer_->uniform("gridLines", gridLines);
 
-    output_.create(height, width, CV_8UC3);
+    output_.create(height, width, CV_8UC4);
 }
 
 void SimpleRendererNode::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
@@ -134,7 +134,7 @@ void SimpleRendererNode::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
     cv_bridge::CvImageConstPtr cv_ptr;
     try
     {
-        cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8);
+        cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGRA8);
     }
     catch (cv_bridge::Exception& e)
     {
