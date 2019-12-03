@@ -14,7 +14,7 @@ precision highp float;
 uniform sampler2D InputTexture;
 uniform vec2 resolution;
 uniform float correction1, correction2, correction3, correction4, croppedWidth, croppedHeight, xCenter, yCenter;
-uniform float pitch, roll, yaw, fovIn, fovOut, x, y, z;
+uniform float pitch, roll, yaw, fovIn, fovOut, x, y, z, blendFront, blendBack;
 uniform int inputProjection, outputProjection, gridLines;
 in vec4 gl_FragCoord;
 bool isTransparent = false; // A global flag indicating if the pixel should just set to transparent and return immediately.
@@ -341,6 +341,7 @@ void main()
     vec4 fishCorrect = vec4(correction1, correction2, correction3, correction4);
     //fishCorrect.xyzw -= 1.0;
     float lineCount = 0.0;
+    float opacity = 1.0;
     // Level Of Detail: how fast should this run?
     // Set LOD to 0 to run fast, set to 2 to blur the image, reducing jagged edges
     const int LOD = 0;
@@ -415,17 +416,32 @@ void main()
             croppedUv = 0.5*croppedUv+0.5;
             croppedUv.x += xCenter/resolution.x - 0.5;
             croppedUv.y += yCenter/resolution.y - 0.5;
-            if (croppedUv.x < 0.0  || croppedUv.y < 0.0 || 1.0 < croppedUv.x || 1.0 < croppedUv.y)
-            {
-                //continue;
-                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            //if (croppedUv.x < 0.0  || croppedUv.y < 0.0 || 1.0 < croppedUv.x || 1.0 < croppedUv.y)
+            //{
+            //    //continue;
+            //    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            //    return;
+            //}
+            //// If a pixel is out of bounds, set it to be transparent
+            //else if (isTransparent)
+            //{
+            //    //continue;
+            //    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            //    return;
+            //}
+            if (blendFront < point.y) {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
                 return;
             }
-            // If a pixel is out of bounds, set it to be transparent
-            else if (isTransparent)
-            {
-                //continue;
-                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            else if (blendBack < point.y && point.y < blendFront) {
+                float blendDiff = blendFront - blendBack;
+                float pointDiff = point.y - blendBack;
+                float blendPercent = pointDiff / blendDiff;
+                //gl_FragColor = vec4(1.0-blendPercent, blendPercent, 0.0, 1.0);
+                opacity = blendPercent;
+            } 
+            else if (point.y < blendBack) {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
                 return;
             }
             // Set the color of the destination pixel to the color of the source pixel
@@ -451,6 +467,7 @@ void main()
             }
             //fragColor += color;
             gl_FragColor = sqrt(color);
+            gl_FragColor.r = 1.0 - opacity;
             //if (i == 0 && j == 0)
             //{
             //    // This is the aliased pixel. If we didn't do antialiasing this is the pixel we'd get.

@@ -1,5 +1,7 @@
 !!python/object/new:dynamic_reconfigure.encoding.Config
 dictitems:
+  blendFront: 0.1
+  blendBack: 0.0
   correction1: 0.0
   correction2: 0.0
   correction3: 0.0

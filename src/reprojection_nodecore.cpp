@@ -12,8 +12,10 @@ void SimpleRendererNode::reconfigure_callback(reprojection::reprojectionConfig &
     //        config.str_param.c_str(), 
     //        config.bool_param?"True":"False", 
     //        config.size);
-    ROS_INFO("Reconfigure Request: %f", config.croppedWidth);
-   
+    //ROS_INFO("Reconfigure Request: %f", config.croppedWidth);
+  
+    blendFront	     = config.blendFront; 
+    blendBack        = config.blendBack; 
     correction1      = config.correction1;
     correction2      = config.correction2;
     correction3      = config.correction3;
@@ -34,6 +36,8 @@ void SimpleRendererNode::reconfigure_callback(reprojection::reprojectionConfig &
     outputProjection = config.outputProjection;
     gridLines        = config.gridLines;
 
+    renderer_->uniform("blendFront", 		blendFront);
+    renderer_->uniform("blendBack", 		blendBack);
     renderer_->uniform("correction1", 		correction1);
     renderer_->uniform("correction2", 		correction2);
     renderer_->uniform("correction3", 		correction3);
@@ -148,7 +152,7 @@ void SimpleRendererNode::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
     );
 
     //Publish
-    cv_bridge::CvImage outImage;;
+    cv_bridge::CvImage outImage;
     outImage.header = cv_ptr->header;
     outImage.encoding = cv_ptr->encoding;
     outImage.image = output_;
