@@ -15,7 +15,7 @@ uniform sampler2D InputTexture;
 uniform vec2 resolution;
 uniform float correction1, correction2, correction3, correction4, croppedWidth, croppedHeight, xCenter, yCenter;
 uniform float pitch, roll, yaw, fovIn, fovOut, x, y, z;
-uniform int inputProjection, outputProjection, gridLines, width, height;
+uniform int inputProjection, outputProjection, gridLines;
 in vec4 gl_FragCoord;
 bool isTransparent = false; // A global flag indicating if the pixel should just set to transparent and return immediately.
 const int EQUI = 0;
@@ -92,7 +92,7 @@ vec3 pointRadialCorrection(vec3 point)
     point = rotatePoint(point, rotation);
     // Get the calibration parameters
     vec4 fishCorrect = vec4(correction1, correction2, correction3, correction4);
-    fishCorrect.xyzw -= 1.0;
+    //fishCorrect.xyzw -= 1.0;
     // Get the longitude
     vec2 latLon = pointToLatLon(point);
     // Get the radius of the point in the xy plane
@@ -228,7 +228,7 @@ vec2 flatImageUvToLatLon(vec2 local_uv, float fovOutput)
 {
     // Position of the source pixel in uv coordinates in the range [-1,1]
     vec2 pos = 2.0 * local_uv - 1.0;
-    float aspectRatio = float(width)/float(height);
+    float aspectRatio = resolution.x / resolution.y;
     vec3 point = vec3(pos.x*aspectRatio, 1.0/fovOutput, pos.y);
     return pointToLatLon(point);
 }
@@ -297,7 +297,7 @@ vec2 latLonToFlatUv(vec2 latLon, float fovInput)
 {
     vec3 point = rotatePoint(latLonToPoint(latLon), vec3(-PI/2.0, 0.0, 0.0));
     latLon = pointToLatLon(point);
-    float aspectRatio = float(width)/float(height);
+    float aspectRatio = resolution.x/resolution.y;
     vec2 xyOnImagePlane;
     vec3 p;
     if (latLon.x < 0.0)
@@ -326,7 +326,7 @@ void main()
     if (gridLines == GRIDLINES_ON && outputProjection == FISHEYE)
     {
         vec2 gridlineUv = uv;
-        gridlineUv.x = (gridlineUv.x * float(width) / float(height)) - 0.5;
+        gridlineUv.x = (gridlineUv.x * resolution.x/resolution.y) - 0.5;
         if (abs(distance(vec2(0.0, 0.0), 2.0 * gridlineUv - 1.0) - 1.0) < 0.01)
         {
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -337,9 +337,9 @@ void main()
     vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 centerFragColor = vec4(0.0, 0.0, 0.0, 0.0);
     float fovInput = fovIn / 180.0;
-    float fovOutput = fovOut;
+    float fovOutput = fovOut / 180.0;
     vec4 fishCorrect = vec4(correction1, correction2, correction3, correction4);
-    fishCorrect.xyzw -= 1.0;
+    //fishCorrect.xyzw -= 1.0;
     float lineCount = 0.0;
     // Level Of Detail: how fast should this run?
     // Set LOD to 0 to run fast, set to 2 to blur the image, reducing jagged edges
@@ -350,20 +350,20 @@ void main()
     //    for(int j = -LOD; j <= LOD; j++)
     //    {
             isTransparent = false;
-            vec2 uv_aa = uv;// + vec2(i, j)/vec2(width, height);
+            vec2 uv_aa = uv;// + vec2(i, j)/vec2(resolution.x, resolution.y);
             // Given some pixel (uv), find the latitude and longitude of that pixel
             vec2 latLon;
             if (outputProjection == EQUI)
-            latLon = equiUvToLatLon(uv_aa);
+              latLon = equiUvToLatLon(uv_aa);
             else if(outputProjection == FISHEYE)
             {
-                uv_aa.x = (uv_aa.x * float(width) / float(height)) - 0.5;
+                uv_aa.x = (uv_aa.x * resolution.x / resolution.y) - 0.5;
                 latLon = fisheyeUvToLatLon(uv_aa, fovOutput);
             }
             else if (outputProjection == FLAT)
-            latLon = flatImageUvToLatLon(uv_aa, fovOutput);
+              latLon = flatImageUvToLatLon(uv_aa, fovOutput);
             else if (outputProjection == CUBEMAP)
-            latLon = cubemapUvToLatLon(uv_aa);
+              latLon = cubemapUvToLatLon(uv_aa);
             // If a pixel is out of bounds, set it to be transparent
             if (isTransparent)
             {
@@ -383,6 +383,8 @@ void main()
             // Rotate the point based on the user input in radians
             point.xyz += translation;
             point = rotatePoint(point, InputRotation.rgb * PI);
+            //gl_FragColor = vec4(point, 1.0);
+            //return;
             if (distance(vec3(0.0, 0.0, 0.0), translation) > 1.0 && distance(vec3(0.0, 0.0, 0.0), point) > distance(vec3(0.0, 0.0, 0.0), translation))
             {
                 isTransparent = true;

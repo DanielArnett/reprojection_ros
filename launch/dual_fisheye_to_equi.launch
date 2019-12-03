@@ -7,6 +7,7 @@
   <arg name="input_topic" default="/theta_s_uvc/image_raw"/>
   <arg name="output_topic" default="image_out"/>
   <group ns="left_equi">
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /left_equi/reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
@@ -16,10 +17,10 @@
       <param name="image_in" 		value="$(arg input_topic)"/>
       <param name="image_out" 		value="image"/>
     </node>
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /left_equi/reprojection $(find reprojection)/cfg/dual_fisheye_left.yaml" />
   </group>
 
   <group ns="right_equi">
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /right_equi/reprojection $(find reprojection)/params/dual_fisheye_right.yaml" />
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
@@ -29,7 +30,6 @@
       <param name="image_in" 		value="$(arg input_topic)"/>
       <param name="image_out" 		value="image"/>
     </node>
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /right_equi/reprojection $(find reprojection)/cfg/dual_fisheye_right.yaml" />
   </group>
 
   <!-- TODO -->
@@ -48,13 +48,16 @@
   <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="reconfigure_gui"/> 
   <node pkg="image_view" type="image_view" name="viewer_in">
     <remap from="image" to="$(arg input_topic)"/>
+    <param name="window_name" value="Dual Fisheye"/>
   </node>
 
   <node pkg="image_view" type="image_view" name="left_equi_viewer">
     <remap from="image" to="/left_equi/image"/>
+    <param name="window_name" value="Left Equi"/>
   </node>
   
   <node pkg="image_view" type="image_view" name="right_equi_viewer">
     <remap from="image" to="/right_equi/image"/>
+    <param name="window_name" value="Right Equi"/>
   </node>
 </launch>
