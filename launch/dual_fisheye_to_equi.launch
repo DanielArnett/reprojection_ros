@@ -63,7 +63,7 @@
     <param name="window_name" value="Dual Fisheye"/>
   </node>
 
-  <node pkg="image_view" type="image_view" name="left_equi_viewer">
+  <!--node pkg="image_view" type="image_view" name="left_equi_viewer">
     <remap from="image" to="/left_equi/image"/>
     <param name="window_name" value="Left Equi"/>
   </node>
@@ -76,7 +76,7 @@
   <node pkg="image_view" type="image_view" name="right_equi_back_viewer">
     <remap from="image" to="/right_equi_rotated/image"/>
     <param name="window_name" value="Right Equi Back"/>
-  </node>
+  </node-->
 
   <node pkg="image_view" type="image_view" name="blended_viewer">
     <remap from="image" to="/blended/image"/>

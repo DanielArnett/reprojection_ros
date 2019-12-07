@@ -3,12 +3,14 @@ This ROS node runs images through the Reprojection shader.
 
 First clone this repository on your machine
 ```
+cd <catkin_ws>/src
 git clone https://github.com/DanielArnett/reprojection_ros.git
 ```
 
 Also clone this repository, which reprojection depends on. 
 ```
-git clone https://github.com/mohammedari/opengl_ros.git
+git clone https://github.com/DanielArnett/opengl_ros.git
+cd opengl_ros && git checkout image_blending
 ```
 
 Then build your catkin workspace.
