@@ -469,9 +469,7 @@ void main()
             }
             //fragColor += color;
             gl_FragColor = sqrt(color);
-            if (uv.x > 0.5) {
-                gl_FragColor.w = 0.0;
-            }
+            gl_FragColor.w *= opacity;
             //if (i == 0 && j == 0)
             //{
             //    // This is the aliased pixel. If we didn't do antialiasing this is the pixel we'd get.
