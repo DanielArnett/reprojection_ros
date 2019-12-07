@@ -7,7 +7,7 @@
   <arg name="input_topic" default="/theta_s_uvc/image_raw"/>
   <arg name="output_topic" default="image_out"/>
   <group ns="left_equi">
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /left_equi/reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
@@ -20,7 +20,7 @@
   </group>
 
   <group ns="right_equi">
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load /right_equi/reprojection $(find reprojection)/params/dual_fisheye_right.yaml" />
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/dual_fisheye_right.yaml" />
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
@@ -31,20 +31,32 @@
       <param name="image_out" 		value="image"/>
     </node>
   </group>
-
-  <!-- TODO -->
-  <!--group ns="blended_equi">
+  <group ns="right_equi_rotated">
+    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/equi_rotate_180.yaml" />
     <node pkg="reprojection" type="reprojection"
       name="reprojection" output="screen">
       <param name="width"           	value="$(arg width)"/>
       <param name="height"          	value="$(arg height)"/>
       <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
       <param name="fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
-      <param name="image_in" 		value="$(arg input_topic)"/>
+      <param name="image_in" 		value="/right_equi/image"/>
       <param name="image_out" 		value="image"/>
-
     </node>
-  </group-->
+  </group>
+  <group ns="blended">
+    <node pkg="opengl_ros" type="blend_images"
+        name="blended_image" output="screen">
+        <param name="width"           value="$(arg width)"/>
+        <param name="height"          value="$(arg height)"/>
+        <param name="vertex_shader"   value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
+        <param name="fragment_shader" value="$(find opengl_ros)/shader/blend_images.glsl"/>
+
+        <param name="first_image"     value="/left_equi/image"/>
+        <param name="second_image"    value="/right_equi_rotated/image"/>
+        <param name="image_out"       value="image"/>
+      </node>
+    </group>
+
   <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="reconfigure_gui"/> 
   <node pkg="image_view" type="image_view" name="viewer_in">
     <remap from="image" to="$(arg input_topic)"/>
@@ -55,9 +67,19 @@
     <remap from="image" to="/left_equi/image"/>
     <param name="window_name" value="Left Equi"/>
   </node>
-  
+
   <node pkg="image_view" type="image_view" name="right_equi_viewer">
     <remap from="image" to="/right_equi/image"/>
     <param name="window_name" value="Right Equi"/>
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="right_equi_back_viewer">
+    <remap from="image" to="/right_equi_rotated/image"/>
+    <param name="window_name" value="Right Equi Back"/>
+  </node>
+
+  <node pkg="image_view" type="image_view" name="blended_viewer">
+    <remap from="image" to="/blended/image"/>
+    <param name="window_name" value="Blended Equi Image"/>
   </node>
 </launch>

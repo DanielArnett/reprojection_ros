@@ -333,7 +333,7 @@ void main()
             return;
         }
     }
-    vec3 InputRotation = vec3(pitch/360.0, roll/360.0, yaw/360.0);
+    vec3 InputRotation = vec3(pitch/180.0, roll/180.0, yaw/180.0);
     vec4 fragColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 centerFragColor = vec4(0.0, 0.0, 0.0, 0.0);
     float fovInput = fovIn / 180.0;
