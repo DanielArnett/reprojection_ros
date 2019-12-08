@@ -1,21 +1,12 @@
 #version 330 core
 
-//in vec2 v_TexCoord;
-//uniform vec4 u_Color;
-//uniform sampler2D u_Texture;
-//out vec4 color;
-//
-//void main() {
-//    vec4 texColor = texture(u_Texture, v_TexCoord);
-//    color = texColor;
-//}
-
 precision highp float;
 uniform sampler2D InputTexture;
+uniform sampler2D secondTexture;
 uniform vec2 resolution;
 uniform float correction1, correction2, correction3, correction4, croppedWidth, croppedHeight, xCenter, yCenter;
 uniform float pitch, roll, yaw, fovIn, fovOut, x, y, z, blendFront, blendBack;
-uniform int inputProjection, outputProjection, gridLines;
+uniform int inputProjection, outputProjection, gridLines, blendImages, linearBlend;
 in vec4 gl_FragCoord;
 bool isTransparent = false; // A global flag indicating if the pixel should just set to transparent and return immediately.
 const int EQUI = 0;
@@ -429,25 +420,32 @@ void main()
             //    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
             //    return;
             //}
-            if (blendFront < point.y) {
-                opacity = 1.0;
-                //gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-                //return;
-            }
-            else if (blendBack < point.y && point.y < blendFront) {
-                float blendDiff = blendFront - blendBack;
-                float pointDiff = point.y - blendBack;
-                float blendPercent = pointDiff / blendDiff;
-                //gl_FragColor = vec4(1.0-blendPercent, blendPercent, 0.0, 1.0);
-                opacity = blendPercent;
-            } 
-            else if (point.y < blendBack) { 
-                opacity = 0.0;
-                //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-                //return;
+            if (linearBlend == 1) {
+                if (blendFront < point.y) {
+                    opacity = 1.0;
+                    //gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+                    //return;
+                }
+                else if (blendBack < point.y && point.y < blendFront) {
+                    float blendDiff = blendFront - blendBack;
+                    float pointDiff = point.y - blendBack;
+                    float blendPercent = pointDiff / blendDiff;
+                    //gl_FragColor = vec4(1.0-blendPercent, blendPercent, 0.0, 1.0);
+                    opacity = blendPercent;
+                } 
+                else if (point.y < blendBack) { 
+                    opacity = 0.0;
+                    //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                    //return;
+                }
             }
             // Set the color of the destination pixel to the color of the source pixel
             vec4 color = texture2D(InputTexture, croppedUv);
+            if (blendImages == 1) {
+                vec4 t0 = color;
+                vec4 t1 = texture2D(secondTexture, uv);
+                color = (1.0 - t1.a) * t0 + t1.a * t1;
+            }
             if (inputProjection == EQUI && gridLines == GRIDLINES_ON)
             {
                 float minDistance = 0.3;
