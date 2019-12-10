@@ -6,84 +6,42 @@
 
 using namespace opengl_ros;
 
-void SimpleRendererNode::reconfigure_callback(reprojection::dual_fisheye_blendingConfig &config, uint32_t level) {
-    //ROS_INFO("Reconfigure Request: %d %f %s %s %d", 
-    //        config.int_param, config.double_param, 
-    //        config.str_param.c_str(), 
-    //        config.bool_param?"True":"False", 
-    //        config.size);
+void SimpleRendererNode::reconfigure(reprojection::reprojectionConfig &config, re_config& this_re_config) {
+    this_re_config.blendFront	    = config.blendFront; 
+    this_re_config.blendBack        = config.blendBack; 
+    this_re_config.linearBlend      = config.linearBlend;
+    this_re_config.correction1      = config.correction1;
+    this_re_config.correction2      = config.correction2;
+    this_re_config.correction3      = config.correction3;
+    this_re_config.correction4      = config.correction4;
+    this_re_config.croppedWidth     = config.croppedWidth;
+    this_re_config.croppedHeight    = config.croppedHeight;
+    this_re_config.xCenter          = config.xCenter;
+    this_re_config.yCenter          = config.yCenter;
+    this_re_config.pitch            = config.pitch;
+    this_re_config.roll             = config.roll;
+    this_re_config.yaw              = config.yaw;
+    this_re_config.fovIn            = config.fovIn;
+    this_re_config.fovOut           = config.fovOut;
+    this_re_config.x                = config.x;
+    this_re_config.y                = config.y;
+    this_re_config.z                = config.z;
+    this_re_config.inputProjection  = config.inputProjection;
+    this_re_config.outputProjection = config.outputProjection;
+    this_re_config.gridLines        = config.gridLines;
+    this_re_config.blendImages      = config.blendImages;
+}
+void SimpleRendererNode::reconfigure_left_callback(reprojection::reprojectionConfig &config, uint32_t level) {
     //ROS_INFO("Reconfigure Request: %f", config.croppedWidth);
-    left_recon_.blendFront	     = config.left_blendFront; 
-    left_recon_.blendBack        = config.left_blendBack; 
-    left_recon_.linearBlend      = config.left_linearBlend;
-    left_recon_.correction1      = config.left_correction1;
-    left_recon_.correction2      = config.left_correction2;
-    left_recon_.correction3      = config.left_correction3;
-    left_recon_.correction4      = config.left_correction4;
-    left_recon_.croppedWidth     = config.left_croppedWidth;
-    left_recon_.croppedHeight    = config.left_croppedHeight;
-    left_recon_.xCenter          = config.left_xCenter;
-    left_recon_.yCenter          = config.left_yCenter;
-    left_recon_.pitch            = config.left_pitch;
-    left_recon_.roll             = config.left_roll;
-    left_recon_.yaw              = config.left_yaw;
-    left_recon_.fovIn            = config.left_fovIn;
-    left_recon_.fovOut           = config.left_fovOut;
-    left_recon_.x                = config.left_x;
-    left_recon_.y                = config.left_y;
-    left_recon_.z                = config.left_z;
-    left_recon_.inputProjection  = config.left_inputProjection;
-    left_recon_.outputProjection = config.left_outputProjection;
-    left_recon_.gridLines        = config.left_gridLines;
-    left_recon_.blendImages      = config.left_blendImages;
+    reconfigure(config, left_recon_);
+}
 
-    right_recon_.blendFront	      = config.right_blendFront; 
-    right_recon_.blendBack        = config.right_blendBack; 
-    right_recon_.linearBlend      = config.right_linearBlend;
-    right_recon_.correction1      = config.right_correction1;
-    right_recon_.correction2      = config.right_correction2;
-    right_recon_.correction3      = config.right_correction3;
-    right_recon_.correction4      = config.right_correction4;
-    right_recon_.croppedWidth     = config.right_croppedWidth;
-    right_recon_.croppedHeight    = config.right_croppedHeight;
-    right_recon_.xCenter          = config.right_xCenter;
-    right_recon_.yCenter          = config.right_yCenter;
-    right_recon_.pitch            = config.right_pitch;
-    right_recon_.roll             = config.right_roll;
-    right_recon_.yaw              = config.right_yaw;
-    right_recon_.fovIn            = config.right_fovIn;
-    right_recon_.fovOut           = config.right_fovOut;
-    right_recon_.x                = config.right_x;
-    right_recon_.y                = config.right_y;
-    right_recon_.z                = config.right_z;
-    right_recon_.inputProjection  = config.right_inputProjection;
-    right_recon_.outputProjection = config.right_outputProjection;
-    right_recon_.gridLines        = config.right_gridLines;
-    right_recon_.blendImages      = config.right_blendImages;
+void SimpleRendererNode::reconfigure_right_callback(reprojection::reprojectionConfig &config, uint32_t level) {
+    reconfigure(config, right_recon_);
+}
 
-    rotated_recon_.blendFront       = config.rotated_blendFront; 
-    rotated_recon_.blendBack        = config.rotated_blendBack; 
-    rotated_recon_.linearBlend      = config.rotated_linearBlend;
-    rotated_recon_.correction1      = config.rotated_correction1;
-    rotated_recon_.correction2      = config.rotated_correction2;
-    rotated_recon_.correction3      = config.rotated_correction3;
-    rotated_recon_.correction4      = config.rotated_correction4;
-    rotated_recon_.croppedWidth     = config.rotated_croppedWidth;
-    rotated_recon_.croppedHeight    = config.rotated_croppedHeight;
-    rotated_recon_.xCenter          = config.rotated_xCenter;
-    rotated_recon_.yCenter          = config.rotated_yCenter;
-    rotated_recon_.pitch            = config.rotated_pitch;
-    rotated_recon_.roll             = config.rotated_roll;
-    rotated_recon_.yaw              = config.rotated_yaw;
-    rotated_recon_.fovIn            = config.rotated_fovIn;
-    rotated_recon_.fovOut           = config.rotated_fovOut;
-    rotated_recon_.x                = config.rotated_x;
-    rotated_recon_.y                = config.rotated_y;
-    rotated_recon_.z                = config.rotated_z;
-    rotated_recon_.inputProjection  = config.rotated_inputProjection;
-    rotated_recon_.outputProjection = config.rotated_outputProjection;
-    rotated_recon_.gridLines        = config.rotated_gridLines;
-    rotated_recon_.blendImages      = config.rotated_blendImages;
+void SimpleRendererNode::reconfigure_right_rotated_callback(reprojection::reprojectionConfig &config, uint32_t level) {
+    reconfigure(config, rotated_recon_);
 }
 
 SimpleRendererNode::SimpleRendererNode(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private)
@@ -124,7 +82,6 @@ SimpleRendererNode::SimpleRendererNode(const ros::NodeHandle& nh, const ros::Nod
 }
 void SimpleRendererNode::setUniforms(std::unique_ptr<cgs::SimpleRenderer>& renderer, re_config& config) 
 {
-
     renderer->uniform("blendFront", 		config.blendFront);
     renderer->uniform("blendBack", 		    config.blendBack);
     renderer->uniform("linearBlend", 	    config.linearBlend);
@@ -189,9 +146,20 @@ void SimpleRendererNode::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
 
 void SimpleRendererNode::run()
 {
-    dynamic_reconfigure::Server<reprojection::dual_fisheye_blendingConfig> server;
-    dynamic_reconfigure::Server<reprojection::dual_fisheye_blendingConfig>::CallbackType f;
-    f = boost::bind(boost::mem_fn(&SimpleRendererNode::reconfigure_callback), this, _1, _2);
-    server.setCallback(f);
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig> left_server(ros::NodeHandle("left_reprojection"));
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig>::CallbackType left_f;
+    left_f = boost::bind(boost::mem_fn(&SimpleRendererNode::reconfigure_left_callback), this, _1, _2);
+    left_server.setCallback(left_f);
+
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig> right_server(ros::NodeHandle("right_reprojection"));
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig>::CallbackType right_f;
+    right_f = boost::bind(boost::mem_fn(&SimpleRendererNode::reconfigure_right_callback), this, _1, _2);
+    right_server.setCallback(right_f);
+
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig> right_rotated_server(ros::NodeHandle("right_rotated_reprojection"));
+    dynamic_reconfigure::Server<reprojection::reprojectionConfig>::CallbackType right_rotated_f;
+    right_rotated_f = boost::bind(boost::mem_fn(&SimpleRendererNode::reconfigure_right_rotated_callback), this, _1, _2);
+    right_rotated_server.setCallback(right_rotated_f);
+
     ros::spin();
 }

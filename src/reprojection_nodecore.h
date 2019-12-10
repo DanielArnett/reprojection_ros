@@ -32,7 +32,7 @@ class SimpleRendererNode
     float correction1, correction2, correction3, correction4;
     float croppedWidth, croppedHeight, xCenter, yCenter;
     float pitch, roll, yaw, x, y, z, fovIn, fovOut, blendFront, blendBack;
-    int inputProjection, outputProjection, gridLines;
+    int inputProjection, outputProjection, gridLines, blendImages, linearBlend;
 
 
 public:

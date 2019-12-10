@@ -2,16 +2,18 @@
 dictitems:
   blendFront: 0.1
   blendBack: 0.0
+  blendImages: false
   correction1: 0.0
   correction2: 0.0
   correction3: 0.0
   correction4: 0.0
-  croppedHeight: 617.0
-  croppedWidth: 633.0
+  croppedHeight: 633.0
+  croppedWidth: 617.0
   fovIn: 195.0
   fovOut: 90.0
   gridLines: false
   inputProjection: 1
+  linearBlend: true
   outputProjection: 0
   pitch: 0.0
   roll: 90.0

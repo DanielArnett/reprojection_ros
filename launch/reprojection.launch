@@ -3,41 +3,18 @@
   <arg name="device"    default="/dev/video0"/>
   <arg name="width"     default="1280"/>
   <arg name="height"    default="720"/>
-  <!--arg name="framerate" default="15"/-->
   <arg name="input_topic" default="/theta_s_uvc/image_raw"/>
   <arg name="output_topic" default="image_out"/>
 
+  <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
   <node pkg="reprojection" type="reprojection"
-    name="reprojection" output="screen">
-    <param name="width"           	value="$(arg width)"/>
-    <param name="height"          	value="$(arg height)"/>
-    <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
-    <param name="fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
-    <param name="image_in" 		value="$(arg input_topic)"/>
-    <param name="image_out" 		value="equi_left"/>
-
-    <param name="correction1"		value="1.0"/>
-    <param name="correction2"   	value="1.0"/>
-    <param name="correction3"   	value="1.0"/>
-    <param name="correction4"   	value="1.0"/>
-    <param name="cropTop"   		value="1.15"/>
-    <!--param name="cropBottom"   		value="1.0"/-->
-    <!--param name="cropLeft"    		value="1.0"/-->
-    <param name="cropRight"     	value="2.15"/>
-    <param name="xCenter"       	value="0.74"/>
-    <param name="yCenter"   		value="0.95"/>
-    <param name="pitch"   		value="0.0"/>
-    <param name="roll"   		value="0.0"/>
-    <param name="yaw"   		value="0.0"/>
-    <param name="fovIn"   		value="1.0"/>
-    <param name="fovOut"   		value="1.0"/>
-    <param name="x"   			value="1.0"/>
-    <param name="y"   			value="1.0"/>
-    <param name="z"   			value="1.0"/>
-    <param name="inputProjection"   	value="0"/>
-    <param name="outputProjection"   	value="0"/>
-    <param name="gridLines"   		value="0"/>
-
+    name="reprojection" output="screen">    
+      <param name="width"           value="$(arg width)"/>
+      <param name="height"          value="$(arg height)"/>
+      <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
+      <param name="fragment_shader" value="$(find reprojection)/shader/reprojection.frag"/>
+      <param name="image_in" 		    value="$(arg input_topic)"/>
+      <param name="image_out" 		  value="image"/>
   </node>
 
   <node pkg="image_view" type="image_view" name="viewer_in">
@@ -45,6 +22,6 @@
   </node>
 
   <node pkg="image_view" type="image_view" name="viewer_out">
-    <remap from="image" to="equi_left"/>
+    <remap from="image" to="/image"/>
   </node>
 </launch>

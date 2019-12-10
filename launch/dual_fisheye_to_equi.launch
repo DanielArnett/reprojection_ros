@@ -3,61 +3,26 @@
   <arg name="device"    default="/dev/video0"/>
   <arg name="width"     default="1280"/>
   <arg name="height"    default="720"/>
-  <!--arg name="framerate" default="15"/-->
   <arg name="input_topic" default="/theta_s_uvc/image_raw"/>
   <arg name="output_topic" default="image_out"/>
-  <group ns="left_equi">
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
-    <node pkg="reprojection" type="reprojection"
-      name="reprojection" output="screen">
+  <group ns="dual_fisheye_blending">
+    <node name="left_dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load left_reprojection $(find reprojection)/params/dual_fisheye_left.yaml" />
+    <node name="right_dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load right_reprojection $(find reprojection)/params/dual_fisheye_right.yaml" />
+    <node name="right_rotated_dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load right_rotated_reprojection $(find reprojection)/params/equi_rotate_180.yaml" />
+    <node pkg="reprojection" type="dual_fisheye_blending"
+      name="dual_fisheye_blending" output="screen">
       <param name="width"           	value="$(arg width)"/>
       <param name="height"          	value="$(arg height)"/>
       <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
-      <param name="fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
+      <param name="reprojection_fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
+      <param name="blending_fragment_shader" 	value="$(find opengl_ros)/shader/blend_images.glsl"/>
       <param name="image_in" 		value="$(arg input_topic)"/>
-      <param name="image_out" 		value="image"/>
+      <param name="image_out" 		value="/blended/image"/>
     </node>
   </group>
-
-  <group ns="right_equi">
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/dual_fisheye_right.yaml" />
-    <node pkg="reprojection" type="reprojection"
-      name="reprojection" output="screen">
-      <param name="width"           	value="$(arg width)"/>
-      <param name="height"          	value="$(arg height)"/>
-      <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
-      <param name="fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
-      <param name="image_in" 		value="$(arg input_topic)"/>
-      <param name="image_out" 		value="image"/>
-    </node>
-  </group>
-  <group ns="right_equi_rotated">
-    <node name="dynamic_reconfigure_load" pkg="dynamic_reconfigure" type="dynparam" args="load reprojection $(find reprojection)/params/equi_rotate_180.yaml" />
-    <node pkg="reprojection" type="reprojection"
-      name="reprojection" output="screen">
-      <param name="width"           	value="$(arg width)"/>
-      <param name="height"          	value="$(arg height)"/>
-      <param name="vertex_shader" 	value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
-      <param name="fragment_shader" 	value="$(find reprojection)/shader/reprojection.frag"/>
-      <param name="image_in" 		value="/right_equi/image"/>
-      <param name="image_out" 		value="image"/>
-    </node>
-  </group>
-  <group ns="blended">
-    <node pkg="opengl_ros" type="blend_images"
-        name="blended_image" output="screen">
-        <param name="width"           value="$(arg width)"/>
-        <param name="height"          value="$(arg height)"/>
-        <param name="vertex_shader"   value="$(find opengl_ros_lib)/shader/vs_passthrough.glsl"/>
-        <param name="fragment_shader" value="$(find opengl_ros)/shader/blend_images.glsl"/>
-
-        <param name="first_image"     value="/left_equi/image"/>
-        <param name="second_image"    value="/right_equi_rotated/image"/>
-        <param name="image_out"       value="image"/>
-      </node>
-    </group>
 
   <node pkg="rqt_reconfigure" type="rqt_reconfigure" name="reconfigure_gui"/> 
+
   <node pkg="image_view" type="image_view" name="viewer_in">
     <remap from="image" to="$(arg input_topic)"/>
     <param name="window_name" value="Dual Fisheye"/>

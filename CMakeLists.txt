@@ -92,11 +92,8 @@ find_package(OpenCV REQUIRED)
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/reprojection.cfg
-# )
 generate_dynamic_reconfigure_options(
-  cfg/dual_fisheye_blending.cfg
+  cfg/reprojection.cfg
 )
 ###################################
 ## catkin specific configuration ##
@@ -136,20 +133,20 @@ include_directories(
 # add_dependencies(opengl_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(reprojection src/reprojection_node.cpp src/reprojection_nodecore.cpp)
+add_executable(reprojection src/reprojection_node.cpp src/reprojection_nodecore.cpp)
 add_executable(dual_fisheye_blending src/dual_fisheye_blending_node.cpp src/dual_fisheye_blending_nodecore.cpp)
 
 # add_dependencies(reprojection ${PROJECT_NAME}_gencfg)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(reprojection ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(reprojection ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(dual_fisheye_blending ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(reprojection
-# ${catkin_LIBRARIES}
-# ${opengl_ros_lib_LIBRARIES}
-# )
+target_link_libraries(reprojection
+${catkin_LIBRARIES}
+${opengl_ros_lib_LIBRARIES}
+)
 target_link_libraries(dual_fisheye_blending
   ${catkin_LIBRARIES}
   ${opengl_ros_lib_LIBRARIES}

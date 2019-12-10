@@ -15,7 +15,9 @@ void SimpleRendererNode::reconfigure_callback(reprojection::reprojectionConfig &
     //ROS_INFO("Reconfigure Request: %f", config.croppedWidth);
   
     blendFront	     = config.blendFront; 
-    blendBack        = config.blendBack; 
+    blendBack        = config.blendBack;  
+    blendImages      = config.blendImages; 
+    linearBlend      = config.linearBlend;
     correction1      = config.correction1;
     correction2      = config.correction2;
     correction3      = config.correction3;
@@ -38,6 +40,8 @@ void SimpleRendererNode::reconfigure_callback(reprojection::reprojectionConfig &
 
     renderer_->uniform("blendFront", 		blendFront);
     renderer_->uniform("blendBack", 		blendBack);
+    renderer_->uniform("blendImages", 		blendImages);
+    renderer_->uniform("linearBlend", 		linearBlend);
     renderer_->uniform("correction1", 		correction1);
     renderer_->uniform("correction2", 		correction2);
     renderer_->uniform("correction3", 		correction3);

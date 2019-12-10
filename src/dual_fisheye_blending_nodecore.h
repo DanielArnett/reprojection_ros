@@ -9,7 +9,7 @@
 
 #include "simple_renderer.h"
 #include <dynamic_reconfigure/server.h>
-#include <reprojection/dual_fisheye_blendingConfig.h>
+#include <reprojection/reprojectionConfig.h>
 
 namespace opengl_ros {
 
@@ -36,7 +36,9 @@ class SimpleRendererNode
     std::string vertexShader_, reprojectionFragmentShader_, blendingFragmentShader_;
 
     void imageCallback(const sensor_msgs::Image::ConstPtr& msg);
-    void reconfigure_callback(reprojection::dual_fisheye_blendingConfig &config, uint32_t level);
+    void reconfigure_left_callback(reprojection::reprojectionConfig &config, uint32_t level);
+    void reconfigure_right_callback(reprojection::reprojectionConfig &config, uint32_t level);
+    void reconfigure_right_rotated_callback(reprojection::reprojectionConfig &config, uint32_t level);
 
     struct re_config {
         float correction1, correction2, correction3, correction4;
@@ -44,7 +46,8 @@ class SimpleRendererNode
         float pitch, roll, yaw, x, y, z, fovIn, fovOut, blendFront, blendBack;
         int inputProjection, outputProjection, gridLines, blendImages, linearBlend;
     } left_recon_, right_recon_, rotated_recon_, blended_recon_;
-    void set_reprojection_params(reprojection::dual_fisheye_blendingConfig &config, re_config recon, const std::unique_ptr<cgs::SimpleRenderer>& renderer);
+    void reconfigure(reprojection::reprojectionConfig &config, re_config& this_re_config);
+    void set_reprojection_params(reprojection::reprojectionConfig &config, re_config recon, const std::unique_ptr<cgs::SimpleRenderer>& renderer);
     void setUniforms(std::unique_ptr<cgs::SimpleRenderer>& renderer, re_config& config);
 
 public:
