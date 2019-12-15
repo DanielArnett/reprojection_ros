@@ -1,0 +1,26 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  blendBack: 0.0
+  blendFront: 0.0
+  blendImages: true
+  correction1: 0.0
+  correction2: 0.0
+  correction3: 0.0
+  correction4: 0.0
+  croppedHeight: 720.0
+  croppedWidth: 1280.0
+  fovIn: 1.0
+  fovOut: 1.0
+  gridLines: false
+  inputProjection: 0
+  linearBlend: false
+  outputProjection: 2
+  pitch: 0.0
+  roll: 0.0
+  x: 1.0
+  xCenter: 640.0
+  y: 1.0
+  yCenter: 360.0
+  yaw: 0.0
+  z: 1.0
+state: []
